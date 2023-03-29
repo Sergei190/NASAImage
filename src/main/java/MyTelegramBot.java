@@ -8,18 +8,21 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import java.io.IOException;
 
 public class MyTelegramBot extends TelegramLongPollingBot {
+    public static final String BOT_TOKEN = "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";
 
-    public static final String BOT_TOKEN = "КЛЮЧ ВАШЕГО БОТА";
+    public static final String BOT_USERNAME = "Sergei190";
 
-    public static final String BOT_USERNAME = "ИМЯ ВАШЕГО БОТА";
+    public static final String URI = "https://api.nasa.gov/planetary/apod?api_key=bksFdfNNwA61vDaBsk0wrdmilKIAhBHECdwPNVGt";
 
-    public static final String URI = "https://api.nasa.gov/planetary/apod?api_key = bksFdfNNwA61vDaBsk0wrdmilKIAhBHECdwPNVGt";
-
-    public static long chat_id;
+    public static long chatId;
 
     public MyTelegramBot() throws TelegramApiException {
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-        botsApi.registerBot(this);
+        try {
+            botsApi.registerBot(this);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -35,7 +38,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
-            chat_id = update.getMessage().getChatId();
+            chatId = update.getMessage().getChatId();
             switch (update.getMessage().getText()) {
                 case "/help":
                     sendMessage("Привет, я бот NASA! Я высылаю ссылки на картинки по запросу. " +
@@ -48,15 +51,13 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                         throw new RuntimeException(e);
                     }
                     break;
-                default:
-                    sendMessage("Я не понимаю :(");
             }
         }
     }
 
     private void sendMessage(String messageText) {
         SendMessage message = new SendMessage();
-        message.setChatId(chat_id);
+        message.setChatId(chatId);
         message.setText(messageText);
         try {
             execute(message);
